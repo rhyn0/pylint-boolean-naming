@@ -7,5 +7,9 @@
         ],
         "editor.wordBasedSuggestions": "off",
         "editor.defaultFormatter": "ms-python.black-formatter",
-    }
+        "editor.defaultFoldingRangeProvider": "charliermarsh.ruff"
+    },
+    "mypy-type-checker.args": [
+        "--config-file=./pyproject.toml"
+    ],
 }
