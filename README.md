@@ -1,6 +1,6 @@
-# Pylint Boolean Naming Plugin
+# Pylint Boolean Naming Checker
 
-This is a [pylint](https://pylint.readthedocs.io/en/stable/) plugin to enforce checking that variables with boolean results include common phrases implying True/False states.
+This is a [pylint](https://pylint.readthedocs.io/en/stable/) Checker to enforce variables with boolean results include common phrases implying True/False states.
 
 <details>
     <summary>Inspiration taken from here</summary>
