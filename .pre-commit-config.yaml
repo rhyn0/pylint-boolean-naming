@@ -29,6 +29,7 @@ repos:
       - id: poetry-lock
         args: ["--no-update"]
       - id: poetry-export
+        stages: [pre-commit]
         args: ["-f", "requirements.txt", "-o", "requirements.txt"]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.2.1
