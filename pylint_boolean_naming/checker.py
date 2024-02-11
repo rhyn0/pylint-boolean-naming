@@ -9,7 +9,7 @@ from typing import Union
 from astroid import nodes
 from pylint.checkers import BaseChecker
 
-if platform.python_version_tuple() <= ("3", "8"):
+if platform.python_version_tuple() < ("3", "9"):
     # Standard Library
     from typing import Generator
 else:
