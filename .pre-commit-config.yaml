@@ -27,6 +27,7 @@ repos:
       - id: poetry-check
         args: ["--lock"]
       - id: poetry-lock
+        stages: [pre-commit]
         args: ["--no-update"]
       - id: poetry-export
         stages: [pre-commit]
