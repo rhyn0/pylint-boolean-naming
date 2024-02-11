@@ -110,7 +110,8 @@ jobs:
         with:
           path: venv
           fail-on-cache-miss: true
-          key: ${{ runner.os }}-${{ steps.generate-python-key.outputs.key }}
+          key: ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{
+            needs.setup-env.outputs.python-key }}
 
       - name: Install Python dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
@@ -123,7 +124,7 @@ jobs:
           path: ${{ env.PRE_COMMIT_CACHE }}
           fail-on-cache-miss: true
           key: >-
-            ${{ runner.os }}-${{ steps.generate-pre-commit-key.outputs.key }}
+            ${{ runner.os }}-${{ needs.setup-env.outputs.pre-commit-key }}
 
       - name: Run pylint checks
         run: |
