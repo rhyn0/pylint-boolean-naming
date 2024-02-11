@@ -1,13 +1,20 @@
 """Implementation of the boolean naming checker."""
 
 # Standard Library
-from collections.abc import Generator
+import platform
 from typing import Final
 from typing import Union
 
 # External Party
 from astroid import nodes
 from pylint.checkers import BaseChecker
+
+if platform.python_version_tuple() <= ("3", "8"):
+    # Standard Library
+    from typing import Generator
+else:
+    # Standard Library
+    from collections.abc import Generator
 
 default_boolean_variable_prefixes = ("is", "has", "can")
 
