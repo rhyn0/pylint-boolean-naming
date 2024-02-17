@@ -1,18 +1,16 @@
 """Implementation of the boolean naming checker."""
 
+from __future__ import annotations
+
 # Standard Library
-import platform
-from typing import Final
-from typing import Union
+from typing import TYPE_CHECKING
+from typing import ClassVar
 
 # External Party
 from astroid import nodes
 from pylint.checkers import BaseChecker
 
-if platform.python_version_tuple() < ("3", "9"):
-    # Standard Library
-    from typing import Generator
-else:
+if TYPE_CHECKING:
     # Standard Library
     from collections.abc import Generator
 
@@ -20,10 +18,10 @@ default_boolean_variable_prefixes = ("is", "has", "can")
 
 
 class BooleanNamingChecker(BaseChecker):
-    """Extend BaseChecker to enforce the naming of boolean variables."""
+    """Checks for boolean variable names that do not start with a valid prefix."""
 
-    name = "boolean-naming"
-    msgs: Final = {
+    name = "boolean_naming"
+    msgs: ClassVar = {
         "W9901": (
             "Invalid boolean variable name '%s'",
             "invalid-boolean-variable-name",
@@ -57,18 +55,25 @@ class BooleanNamingChecker(BaseChecker):
         )
 
     def _individual_assign_check(
-        self, node: Union[nodes.List, nodes.Tuple, nodes.AssignName], index: int
+        self, node: nodes.List | nodes.Tuple | nodes.AssignName, index: int
     ) -> None:
         assign_target = (
             node.elts[index] if isinstance(node, (nodes.Tuple, nodes.List)) else node
         )
-        if not isinstance(assign_target, nodes.AssignName):
+        if not isinstance(
+            assign_target, (nodes.AssignName, nodes.Attribute, nodes.AssignAttr)
+        ):
             return
-        if not self._name_starts_with_prefix(assign_target.name):
+        name = (
+            assign_target.name
+            if isinstance(assign_target, nodes.AssignName)
+            else assign_target.attrname
+        )
+        if not self._name_starts_with_prefix(name):
             self.add_message(
                 "invalid-boolean-variable-name",
                 node=assign_target,
-                args=assign_target.name,
+                args=name,
             )
 
     def visit_assign(self, node: nodes.Assign) -> None:
@@ -79,6 +84,11 @@ class BooleanNamingChecker(BaseChecker):
         elts = node.value.elts if hasattr(node.value, "elts") else (node.value,)
         # targets is a list of left hand side operators, usually compressed to one
         target = node.targets[0]
+        # if left side is a name, and right side is a container don't check it
+        if isinstance(target, nodes.AssignName) and isinstance(
+            node.value, (nodes.Tuple, nodes.List)
+        ):
+            return
         for idx in self._contains_bool_value(*elts):
             self._individual_assign_check(target, idx)
 
@@ -89,7 +99,12 @@ class BooleanNamingChecker(BaseChecker):
             or node.annotation.name != "bool"
         ):
             return
-        if not self._name_starts_with_prefix(node.target.name):
+        name = (
+            node.target.name
+            if isinstance(node.target, nodes.AssignName)
+            else node.target.attrname
+        )
+        if not self._name_starts_with_prefix(name):
             self.add_message(
-                "invalid-boolean-variable-name", node=node.target, args=node.target.name
+                "invalid-boolean-variable-name", node=node.target, args=name
             )
