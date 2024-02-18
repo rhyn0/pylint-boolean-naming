@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pylint-boolean-naming"
-version = "0.1.0"
+version = "0.2.0"
 description = "Pylint Plugin for enforcing boolean variable naming"
 authors = ["Ryan Ozawa <ryan.ozawa21@gmail.com>"]
 license = "GNU GPLv3"
